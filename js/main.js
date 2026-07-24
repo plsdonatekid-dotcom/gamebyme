@@ -31,13 +31,21 @@
       }
 
       document.getElementById('start-btn')?.addEventListener('click', () => {
-        document.getElementById('title-screen').style.display = 'none';
-        game.startGame(true);
+        try {
+          document.getElementById('title-screen').style.display = 'none';
+          game.startGame(true);
+        } catch (e) {
+          game.renderError(e);
+        }
       });
 
       document.getElementById('continue-btn')?.addEventListener('click', () => {
-        document.getElementById('title-screen').style.display = 'none';
-        game.startGame(false);
+        try {
+          document.getElementById('title-screen').style.display = 'none';
+          game.startGame(false);
+        } catch (e) {
+          game.renderError(e);
+        }
       });
 
       document.getElementById('inv-close')?.addEventListener('click', () => {

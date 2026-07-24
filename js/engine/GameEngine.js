@@ -75,10 +75,14 @@ const GameEngine = {
   },
 
   loop(time) {
-    const dt = Math.min((time - this.lastTime) / 1000, 0.05);
-    this.lastTime = time;
-    this.update(dt);
-    this.render();
+    try {
+      const dt = Math.min((time - this.lastTime) / 1000, 0.05);
+      this.lastTime = time;
+      this.update(dt);
+      this.render();
+    } catch (e) {
+      this.renderError(e);
+    }
     for (const k in this.keysJustDown) this.keysJustDown[k] = false;
     this.mouseClicked = false;
     requestAnimationFrame((t) => this.loop(t));
@@ -157,6 +161,34 @@ const GameEngine = {
 
   // ---- Title State ----
   updateTitle(dt) {},
+
+  renderError(e) {
+    console.error('Game error:', e);
+    const ctx = this.ctx;
+    if (!ctx) return;
+    ctx.save();
+    ctx.fillStyle = '#1a0a0a';
+    ctx.fillRect(0, 0, this.width, this.height);
+    ctx.fillStyle = '#ff4444';
+    ctx.font = '14px monospace';
+    ctx.textAlign = 'left';
+    let y = 40;
+    ctx.fillText('ERROR: ' + (e.message || e), 20, y);
+    y += 25;
+    ctx.fillText('Check console (F12) for full trace.', 20, y);
+    y += 25;
+    ctx.fillStyle = '#ffaa44';
+    ctx.fillText('Stack:', 20, y);
+    y += 20;
+    const stack = (e.stack || '').split('\n').slice(0, 10);
+    for (const line of stack) {
+      ctx.fillStyle = '#cccc88';
+      ctx.font = '11px monospace';
+      ctx.fillText(line.trim(), 20, y);
+      y += 16;
+    }
+    ctx.restore();
+  },
 
   renderTitle(ctx) {
     const cx = this.width / 2;

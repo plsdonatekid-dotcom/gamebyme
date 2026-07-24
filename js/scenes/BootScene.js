@@ -1,88 +1,86 @@
 class BootScene extends Phaser.Scene {
   constructor() { super('BootScene'); }
 
-  preload() {
+  create() {
     this.createTextures();
+    this.scene.start('LoadScene');
   }
 
   createTextures() {
-    const tileSize = 32;
-    const colors = {
-      grass: 0x3a7a2a, dirt: 0x7a6a4a, wall: 0x5a5a6a, water: 0x2a4a8a,
-      tree: 0x1a4a1a, stone: 0x5a5a5a, path: 0x6a5a3a, floor: 0x4a3a5a,
-      cave_floor: 0x3a2a1a, ruin_floor: 0x4a4a4a, snow: 0xccccee,
-      lava: 0xff4400, bridge: 0x6a4a2a, temple_floor: 0x5a4a3a,
-    };
-    for (const [name, color] of Object.entries(colors)) {
-      this.createTileTexture(name, color, tileSize);
-    }
-    this.createPlayerTexture(tileSize);
-    this.createEnemyTexture(tileSize);
-    this.createNpcTexture(tileSize);
-    this.createParticleTextures();
+    const ts = 32;
+    this.makeTile('grass', 0x3a7a2a, ts);
+    this.makeTile('dirt', 0x7a6a4a, ts);
+    this.makeTile('wall', 0x5a5a6a, ts);
+    this.makeTile('water', 0x2a4a8a, ts);
+    this.makeTile('tree', 0x1a4a1a, ts);
+    this.makeTile('stone', 0x5a5a5a, ts);
+    this.makeTile('path', 0x6a5a3a, ts);
+    this.makeTile('floor', 0x4a3a5a, ts);
+    this.makeTile('cave_floor', 0x3a2a1a, ts);
+    this.makeTile('ruin_floor', 0x4a4a4a, ts);
+    this.makeTile('snow', 0xccccee, ts);
+    this.makeTile('lava', 0xff4400, ts);
+    this.makeTile('bridge', 0x6a4a2a, ts);
+    this.makeTile('temple_floor', 0x5a4a3a, ts);
+
+    const c = document.createElement('canvas');
+    c.width = ts; c.height = ts;
+    const ctx = c.getContext('2d');
+
+    ctx.fillStyle = '#4488ff';
+    ctx.fillRect(4, 2, 24, 6);
+    ctx.fillStyle = '#66aaff';
+    ctx.fillRect(6, 8, 20, 22);
+    ctx.fillStyle = '#ffdd88';
+    ctx.fillRect(8, 4, 6, 6);
+    ctx.fillRect(18, 4, 6, 6);
+    this.textures.addCanvas('player', c);
+
+    const c2 = document.createElement('canvas');
+    c2.width = ts; c2.height = ts;
+    const ctx2 = c2.getContext('2d');
+    ctx2.fillStyle = '#ff4444';
+    ctx2.fillRect(4, 4, 24, 24);
+    ctx2.fillStyle = '#cc2222';
+    ctx2.fillRect(6, 6, 20, 20);
+    ctx2.fillStyle = '#ffffff';
+    ctx2.fillRect(8, 8, 4, 4);
+    ctx2.fillRect(20, 8, 4, 4);
+    this.textures.addCanvas('enemy', c2);
+
+    const c3 = document.createElement('canvas');
+    c3.width = ts; c3.height = ts;
+    const ctx3 = c3.getContext('2d');
+    ctx3.fillStyle = '#44ff88';
+    ctx3.fillRect(4, 2, 24, 6);
+    ctx3.fillStyle = '#66ffaa';
+    ctx3.fillRect(6, 8, 20, 22);
+    ctx3.fillStyle = '#ffdd88';
+    ctx3.fillRect(8, 4, 6, 6);
+    ctx3.fillRect(18, 4, 6, 6);
+    this.textures.addCanvas('npc', c3);
+
+    const cp = document.createElement('canvas');
+    cp.width = 4; cp.height = 4;
+    const cpCtx = cp.getContext('2d');
+    cpCtx.fillStyle = '#ffffff';
+    cpCtx.fillRect(0, 0, 4, 4);
+    this.textures.addCanvas('particle', cp);
+
+    const cp2 = document.createElement('canvas');
+    cp2.width = 8; cp2.height = 8;
+    const cp2Ctx = cp2.getContext('2d');
+    cp2Ctx.fillStyle = '#ffffff';
+    cp2Ctx.fillRect(0, 0, 8, 8);
+    this.textures.addCanvas('particle_large', cp2);
   }
 
-  createTileTexture(key, color, size) {
-    const g = this.add.graphics();
-    g.fillStyle(color, 1);
-    g.fillRect(0, 0, size, size);
-    g.generateTexture(key, size, size);
-    g.destroy();
-  }
-
-  createPlayerTexture(size) {
-    const g = this.add.graphics();
-    g.fillStyle(0x4488ff, 1);
-    g.fillRect(4, 2, size - 8, 6);
-    g.fillStyle(0x66aaff, 1);
-    g.fillRect(6, 8, size - 12, size - 10);
-    g.fillStyle(0xffdd88, 1);
-    g.fillRect(8, 4, 6, 6);
-    g.fillRect(size - 14, 4, 6, 6);
-    g.generateTexture('player', size, size);
-    g.destroy();
-  }
-
-  createEnemyTexture(size) {
-    const g = this.add.graphics();
-    g.fillStyle(0xff4444, 1);
-    g.fillRect(4, 4, size - 8, size - 8);
-    g.fillStyle(0xcc2222, 1);
-    g.fillRect(6, 6, size - 12, size - 12);
-    g.fillStyle(0xffffff, 1);
-    g.fillRect(8, 8, 4, 4);
-    g.fillRect(size - 12, 8, 4, 4);
-    g.generateTexture('enemy', size, size);
-    g.destroy();
-  }
-
-  createNpcTexture(size) {
-    const g = this.add.graphics();
-    g.fillStyle(0x44ff88, 1);
-    g.fillRect(4, 2, size - 8, 6);
-    g.fillStyle(0x66ffaa, 1);
-    g.fillRect(6, 8, size - 12, size - 10);
-    g.fillStyle(0xffdd88, 1);
-    g.fillRect(8, 4, 6, 6);
-    g.fillRect(size - 14, 4, 6, 6);
-    g.generateTexture('npc', size, size);
-    g.destroy();
-  }
-
-  createParticleTextures() {
-    const g = this.add.graphics();
-    g.fillStyle(0xffffff, 1);
-    g.fillRect(0, 0, 4, 4);
-    g.generateTexture('particle', 4, 4);
-    g.destroy();
-    const g2 = this.add.graphics();
-    g2.fillStyle(0xffffff, 1);
-    g2.fillRect(0, 0, 8, 8);
-    g2.generateTexture('particle_large', 8, 8);
-    g2.destroy();
-  }
-
-  create() {
-    this.scene.start('LoadScene');
+  makeTile(key, color, size) {
+    const c = document.createElement('canvas');
+    c.width = size; c.height = size;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#' + color.toString(16).padStart(6, '0');
+    ctx.fillRect(0, 0, size, size);
+    this.textures.addCanvas(key, c);
   }
 }

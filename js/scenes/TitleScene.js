@@ -2,12 +2,14 @@ class TitleScene extends Phaser.Scene {
   constructor() { super('TitleScene'); }
 
   create() {
+    console.log('TitleScene started');
     const startBtn = document.getElementById('start-btn');
     const continueBtn = document.getElementById('continue-btn');
     const titleScreen = document.getElementById('title-screen');
 
     if (startBtn) {
       startBtn.onclick = () => {
+        console.log('New game started');
         AudioSystem.init();
         AudioSystem.resume();
         titleScreen.style.display = 'none';
@@ -23,6 +25,7 @@ class TitleScene extends Phaser.Scene {
 
     if (continueBtn) {
       continueBtn.onclick = () => {
+        console.log('Continue game');
         AudioSystem.init();
         AudioSystem.resume();
         const loaded = loadGame();
@@ -30,6 +33,8 @@ class TitleScene extends Phaser.Scene {
           this.game.global.saveData = loaded;
           titleScreen.style.display = 'none';
           this.scene.start('WorldScene');
+        } else {
+          showToast('No save found!', '#ff4444');
         }
       };
     }

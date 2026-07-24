@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Mythos Isles - Fantasy RPG</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 </head>
 <body>
   <div id="game-container">
+    <canvas id="game-canvas"></canvas>
     <div id="ui-overlay">
       <div id="hud">
         <div id="hud-left">
@@ -119,14 +119,7 @@
   <script src="js/systems/minimap.js"></script>
   <script src="js/systems/world.js"></script>
   <script src="js/systems/camera.js"></script>
-  <script src="js/scenes/BootScene.js"></script>
-  <script src="js/scenes/LoadScene.js"></script>
-  <script src="js/scenes/TitleScene.js"></script>
-  <script src="js/scenes/WorldScene.js"></script>
-  <script src="js/scenes/CombatScene.js"></script>
-  <script src="js/scenes/DialogScene.js"></script>
-  <script src="js/scenes/InventoryScene.js"></script>
-  <script src="js/scenes/MapScene.js"></script>
+  <script src="js/engine/GameEngine.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

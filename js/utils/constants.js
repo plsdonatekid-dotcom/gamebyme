@@ -8,22 +8,10 @@ const BASE_MOVE_SPEED = 120;
 const GOLD_NAME = 'Gold';
 
 const KEYS = {
-  W: Phaser.Input.Keyboard.KeyCodes.W,
-  A: Phaser.Input.Keyboard.KeyCodes.A,
-  S: Phaser.Input.Keyboard.KeyCodes.S,
-  D: Phaser.Input.Keyboard.KeyCodes.D,
-  SPACE: Phaser.Input.Keyboard.KeyCodes.SPACE,
-  E: Phaser.Input.Keyboard.KeyCodes.E,
-  I: Phaser.Input.Keyboard.KeyCodes.I,
-  M: Phaser.Input.Keyboard.KeyCodes.M,
-  Q: Phaser.Input.Keyboard.KeyCodes.Q,
-  ESC: Phaser.Input.Keyboard.KeyCodes.ESC,
-  TAB: Phaser.Input.Keyboard.KeyCodes.TAB,
-  ONE: Phaser.Input.Keyboard.KeyCodes.ONE,
-  TWO: Phaser.Input.Keyboard.KeyCodes.TWO,
-  THREE: Phaser.Input.Keyboard.KeyCodes.THREE,
-  FOUR: Phaser.Input.Keyboard.KeyCodes.FOUR,
-  FIVE: Phaser.Input.Keyboard.KeyCodes.FIVE
+  W: 87, A: 65, S: 83, D: 68,
+  SPACE: 32, E: 69, I: 73, M: 77, Q: 81,
+  ESC: 27, TAB: 9,
+  ONE: 49, TWO: 50, THREE: 51, FOUR: 52, FIVE: 53
 };
 
 const COLORS = {

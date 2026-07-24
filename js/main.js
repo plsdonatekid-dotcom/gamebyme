@@ -2,81 +2,59 @@
   'use strict';
 
   function init() {
-    console.log('Main init started');
-    try {
-      document.getElementById('title-screen').style.display = 'flex';
-      document.getElementById('loading-screen').style.display = 'flex';
-    } catch (e) {
-      console.error('DOM access error:', e);
-    }
+    console.log('Game starting...');
+    AudioSystem.init();
+
+    const game = GameEngine;
+    game.init('game-canvas');
+
+    const loadingEl = document.getElementById('loading-screen');
+    const titleEl = document.getElementById('title-screen');
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (titleEl) titleEl.style.display = 'flex';
 
     if (hasSave()) {
-      const cb = document.getElementById('continue-btn');
-      if (cb) cb.classList.remove('hidden');
+      document.getElementById('continue-btn')?.classList.remove('hidden');
     }
 
-    const loadingFill = document.getElementById('loading-fill');
-    let loadProgress = 0;
-    const loadInterval = setInterval(() => {
-      loadProgress += 0.08 + Math.random() * 0.12;
-      if (loadProgress > 1) loadProgress = 1;
-      if (loadingFill) loadingFill.style.width = (loadProgress * 100) + '%';
-      if (loadProgress >= 1) {
-        clearInterval(loadInterval);
-        setTimeout(() => {
-          const ls = document.getElementById('loading-screen');
-          const ts = document.getElementById('title-screen');
-          if (ls) ls.style.display = 'none';
-          if (ts) ts.style.display = 'flex';
-        }, 300);
-      }
-    }, 150);
+    document.getElementById('start-btn')?.addEventListener('click', () => {
+      document.getElementById('title-screen').style.display = 'none';
+      game.startGame(true);
+    });
 
-    try {
-      const config = {
-        type: Phaser.AUTO,
-        width: GAME_WIDTH,
-        height: GAME_HEIGHT,
-        parent: 'game-container',
-        backgroundColor: '#0a0a1a',
-        pixelArt: true,
-        scale: {
-          mode: Phaser.Scale.FIT,
-          autoCenter: Phaser.Scale.CENTER_BOTH,
-        },
-        scene: [BootScene, LoadScene, TitleScene, WorldScene, CombatScene, DialogScene, InventoryScene, MapScene],
-        input: {
-          keyboard: true,
-          mouse: true,
-          touch: true,
-        },
-      };
+    document.getElementById('continue-btn')?.addEventListener('click', () => {
+      document.getElementById('title-screen').style.display = 'none';
+      game.startGame(false);
+    });
 
-      const game = new Phaser.Game(config);
-      game.global = {
-        saveData: null,
-        spellSlots: ['magic_bolt', null, null, null, null],
-      };
-      console.log('Phaser game created');
-    } catch (e) {
-      console.error('Phaser init error:', e);
-    }
+    document.getElementById('inv-close')?.addEventListener('click', () => {
+      document.getElementById('inventory-screen').classList.add('hidden');
+    });
+    document.getElementById('map-close')?.addEventListener('click', () => {
+      document.getElementById('world-map').classList.add('hidden');
+    });
 
-    AudioSystem.init();
-  }
+    document.querySelectorAll('.inv-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.inv-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        game.renderInventoryTab(tab.dataset.tab);
+      });
+    });
 
-  function waitForPhaser() {
-    if (typeof Phaser !== 'undefined') {
-      init();
-    } else {
-      console.warn('Waiting for Phaser...');
-      setTimeout(waitForPhaser, 100);
-    }
+    document.querySelectorAll('.combat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const action = btn.dataset.action;
+        game.handleCombatAction(action);
+      });
+    });
+
+    console.log('Game ready!');
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', waitForPhaser);
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    waitForPhaser();
+    init();
   }
 })();

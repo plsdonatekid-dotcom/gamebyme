@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Mythos Isles - Fantasy RPG</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+</head>
+<body>
+  <div id="game-container">
+    <div id="ui-overlay">
+      <div id="hud">
+        <div id="hud-left">
+          <div id="hp-bar-container" class="bar-container">
+            <div id="hp-bar"></div>
+            <span id="hp-text">100/100</span>
+          </div>
+          <div id="mp-bar-container" class="bar-container">
+            <div id="mp-bar"></div>
+            <span id="mp-text">50/50</span>
+          </div>
+          <div id="xp-bar-container" class="bar-container">
+            <div id="xp-bar"></div>
+            <span id="xp-text">Lv 1</span>
+          </div>
+        </div>
+        <div id="hud-center">
+          <span id="area-name">Mosswood Village</span>
+        </div>
+        <div id="hud-right">
+          <span id="gold-display">&#9733; 0</span>
+          <span id="eq-display"></span>
+        </div>
+      </div>
+      <div id="action-bar">
+        <div class="spell-slot" data-slot="0"></div>
+        <div class="spell-slot" data-slot="1"></div>
+        <div class="spell-slot" data-slot="2"></div>
+        <div class="spell-slot" data-slot="3"></div>
+        <div class="spell-slot" data-slot="4"></div>
+      </div>
+      <div id="dialog-box" class="hidden">
+        <div id="dialog-text"></div>
+        <div id="dialog-choices"></div>
+        <div id="dialog-arrow">&gt;</div>
+      </div>
+      <div id="inventory-screen" class="hidden">
+        <div id="inv-header">
+          <h2>Inventory</h2>
+          <button id="inv-close">X</button>
+        </div>
+        <div id="inv-tabs">
+          <button class="inv-tab active" data-tab="items">Items</button>
+          <button class="inv-tab" data-tab="equipment">Equipment</button>
+          <button class="inv-tab" data-tab="crafting">Crafting</button>
+          <button class="inv-tab" data-tab="spells">Spells</button>
+        </div>
+        <div id="inv-content"></div>
+      </div>
+      <div id="quest-tracker" class="hidden">
+        <h3>Quests</h3>
+        <div id="quest-list"></div>
+      </div>
+      <div id="minimap-container">
+        <canvas id="minimap-canvas" width="120" height="120"></canvas>
+      </div>
+      <div id="toast-container"></div>
+      <div id="world-map" class="hidden">
+        <canvas id="map-canvas" width="800" height="600"></canvas>
+        <button id="map-close">Close Map</button>
+      </div>
+      <div id="combat-hud" class="hidden">
+        <div id="combat-enemy-hp">
+          <div id="enemy-hp-bar"></div>
+          <span id="enemy-name"></span>
+        </div>
+        <div id="combat-actions">
+          <button class="combat-btn" data-action="attack">Attack</button>
+          <button class="combat-btn" data-action="spell">Magic</button>
+          <button class="combat-btn" data-action="defend">Defend</button>
+          <button class="combat-btn" data-action="flee">Flee</button>
+        </div>
+        <div id="combat-log"></div>
+        <div id="spell-select" class="hidden">
+          <div id="spell-list"></div>
+        </div>
+      </div>
+    </div>
+    <div id="loading-screen">
+      <div id="loading-text">Enter the Mythos Isles...</div>
+      <div id="loading-bar"><div id="loading-fill"></div></div>
+    </div>
+    <div id="title-screen">
+      <h1>Mythos Isles</h1>
+      <p>A Fantasy Adventure</p>
+      <button id="start-btn">Begin Journey</button>
+      <button id="continue-btn" class="hidden">Continue</button>
+    </div>
+    <div id="damage-flash"></div>
+  </div>
+  <script src="js/utils/constants.js"></script>
+  <script src="js/utils/helpers.js"></script>
+  <script src="js/data/items.js"></script>
+  <script src="js/data/spells.js"></script>
+  <script src="js/data/enemies.js"></script>
+  <script src="js/data/npcs.js"></script>
+  <script src="js/data/quests.js"></script>
+  <script src="js/data/maps.js"></script>
+  <script src="js/data/craftingRecipes.js"></script>
+  <script src="js/systems/save.js"></script>
+  <script src="js/systems/inventory.js"></script>
+  <script src="js/systems/player.js"></script>
+  <script src="js/systems/combat.js"></script>
+  <script src="js/systems/quests.js"></script>
+  <script src="js/systems/crafting.js"></script>
+  <script src="js/systems/audio.js"></script>
+  <script src="js/systems/particles.js"></script>
+  <script src="js/systems/minimap.js"></script>
+  <script src="js/systems/world.js"></script>
+  <script src="js/systems/camera.js"></script>
+  <script src="js/scenes/BootScene.js"></script>
+  <script src="js/scenes/LoadScene.js"></script>
+  <script src="js/scenes/TitleScene.js"></script>
+  <script src="js/scenes/WorldScene.js"></script>
+  <script src="js/scenes/CombatScene.js"></script>
+  <script src="js/scenes/DialogScene.js"></script>
+  <script src="js/scenes/InventoryScene.js"></script>
+  <script src="js/scenes/MapScene.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

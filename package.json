@@ -1,0 +1,1 @@
+{"name": "fantasy-rpg", "version": "1.0.0", "description": "Mythos Isles - A lightweight fantasy RPG", "main": "index.html", "scripts": {"start": "npx serve . -l $PORT", "deploy": "git push render main"}, "keywords": ["rpg", "game", "phaser", "fantasy"], "license": "MIT"}

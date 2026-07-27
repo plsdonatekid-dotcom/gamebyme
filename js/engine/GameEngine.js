@@ -539,121 +539,197 @@ const GameEngine = {
     }
   },
 
+  drawCharacter(ctx, x, y, colors, bob, walkCycle, extra) {
+    const t = this.animTime || 0;
+    const isWalking = extra === 'walk';
+    const legSwing = isWalking ? Math.sin(walkCycle) * 2.5 : 0;
+    const armSwing = isWalking ? Math.sin(walkCycle + Math.PI) * 1.5 : 0;
+    const bodyBob = isWalking ? Math.abs(Math.sin(walkCycle)) * 1.2 : bob * 0.4;
+    const capeSway = Math.sin(t * 3 + legSwing) * 1.5;
+    const blinkPhase = (t * 1.5) % 5;
+    const isBlinking = blinkPhase < 0.1;
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.beginPath(); ctx.ellipse(x + 16, y + 30, 9, 3.5, 0, 0, Math.PI * 2); ctx.fill();
+    const bx = x, by = y + bodyBob;
+    const base = colors.base || '#5588cc', skin = colors.skin || '#ffdd88';
+    const hair = colors.hair || '#8a5522', hairLight = colors.hairLight || '#aa7744';
+    const boot = colors.boot || '#663311', cape = colors.cape || '#cc2222';
+    ctx.fillStyle = cape;
+    ctx.fillRect(bx + 4, by + 10, 5, 16);
+    ctx.fillRect(bx + 23, by + 10, 5, 16);
+    ctx.fillStyle = cape;
+    ctx.fillRect(bx + 3 + capeSway, by + 18, 4, 8);
+    ctx.fillRect(bx + 25 + capeSway, by + 18, 4, 8);
+    ctx.fillStyle = base;
+    ctx.fillRect(bx + 8, by + 10, 16, 10);
+    ctx.fillStyle = colors.trim || '#4477aa';
+    ctx.fillRect(bx + 8, by + 10, 16, 3);
+    ctx.fillRect(bx + 8, by + 18, 16, 2);
+    ctx.fillStyle = '#8a6a3a';
+    ctx.fillRect(bx + 9, by + 16, 14, 2);
+    ctx.fillRect(bx + 14, by + 15, 4, 4);
+    ctx.fillStyle = skin;
+    ctx.beginPath(); ctx.arc(bx + 16, by + 6, 7.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = skin;
+    ctx.beginPath(); ctx.arc(bx + 16, by + 7, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = hair;
+    ctx.beginPath(); ctx.arc(bx + 16, by + 4, 8, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = hairLight;
+    ctx.fillRect(bx + 10, by, 3, 4);
+    ctx.fillRect(bx + 18, by - 1, 4, 5);
+    ctx.fillRect(bx + 13, by - 2, 4, 4);
+    ctx.fillStyle = hair;
+    ctx.fillRect(bx + 8, by + 2, 3, 2);
+    ctx.fillRect(bx + 21, by + 1, 3, 3);
+    if (isBlinking) {
+      ctx.fillStyle = '#8a6a3a';
+      ctx.fillRect(bx + 11, by + 6, 3, 1);
+      ctx.fillRect(bx + 18, by + 6, 3, 1);
+    } else {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(bx + 10, by + 5, 5, 5);
+      ctx.fillRect(bx + 17, by + 5, 5, 5);
+      ctx.fillStyle = '#222244';
+      ctx.fillRect(bx + 11, by + 6, 3, 3);
+      ctx.fillRect(bx + 18, by + 6, 3, 3);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(bx + 12, by + 5, 2, 2);
+      ctx.fillRect(bx + 19, by + 5, 2, 2);
+    }
+    ctx.fillStyle = '#cc8866';
+    ctx.fillRect(bx + 14, by + 9, 1, 1);
+    ctx.fillRect(bx + 17, by + 9, 1, 1);
+    const lx = bx + 10 + legSwing, rx = bx + 18 - legSwing;
+    const la = bx + 8 + armSwing, ra = bx + 20 - armSwing;
+    ctx.fillStyle = colors.pants || '#334477';
+    ctx.fillRect(la, by + 18, 3, 6);
+    ctx.fillRect(ra, by + 18, 3, 6);
+    ctx.fillStyle = base;
+    ctx.fillRect(la, by + 12, 3, 6);
+    ctx.fillRect(ra, by + 12, 3, 6);
+    ctx.fillStyle = colors.pants || '#334477';
+    ctx.fillRect(lx, by + 20, 4, 6);
+    ctx.fillRect(rx, by + 20, 4, 6);
+    ctx.fillStyle = boot;
+    ctx.fillRect(lx - 1, by + 26, 5, 3);
+    ctx.fillRect(rx - 1, by + 26, 5, 3);
+    ctx.fillStyle = '#6a4a2a';
+    ctx.fillRect(bx + 24, by + 12, 3, 14);
+    ctx.fillRect(bx + 26, by + 11, 2, 4);
+    const glow = Math.sin(t * 4) * 0.3 + 0.7;
+    ctx.fillStyle = `rgba(136,102,238,${glow * 0.6})`;
+    ctx.beginPath(); ctx.arc(bx + 27, by + 9, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#aa88ff';
+    ctx.beginPath(); ctx.arc(bx + 27, by + 9, 2.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(bx + 26, by + 8, 2, 2);
+  },
+
   renderPlayer(ctx, cx, cy) {
-    const px = this.pixelX - cx, py = this.pixelY - cy;
-    const ts = this.tileSize;
-    const walkCycle = (this.animTime || 0) * 10;
+    this.drawCharacter(ctx, this.pixelX - cx, this.pixelY - cy,
+      { base: '#5588cc', skin: '#ffdd88', hair: '#8a5522', hairLight: '#aa7744',
+        boot: '#663311', cape: '#cc2222', pants: '#334477', trim: '#6688dd' },
+      Math.sin((this.animTime || 0) * 3),
+      (this.animTime || 0) * 10,
+      this.isMoving ? 'walk' : 'idle'
+    );
+    this.renderCompanion(ctx, this.pixelX - cx, this.pixelY - cy);
+  },
+
+  renderCompanion(ctx, px, py) {
+    const t = this.animTime || 0;
+    const walkCycle = t * 10;
     const isWalking = this.isMoving;
-    const legOffset = isWalking ? Math.sin(walkCycle) * 3 : 0;
-    const armOffset = isWalking ? Math.sin(walkCycle + Math.PI) * 2 : 0;
-    const bob = isWalking ? Math.abs(Math.sin(walkCycle)) * 1.5 : Math.sin((this.animTime || 0) * 8) * 0.5;
-    ctx.fillStyle = 'rgba(0,0,0,0.15)';
-    ctx.beginPath();
-    ctx.ellipse(px + 16, py + 30, 8, 3, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#3355aa';
-    ctx.fillRect(px + 10, py + 16 + bob, 4, 14);
-    ctx.fillRect(px + 18, py + 16 + bob, 4, 14);
-    ctx.fillStyle = '#5588cc';
-    ctx.fillRect(px + 8, py + 10 + bob, ts - 16, ts - 12);
-    ctx.fillStyle = '#3366aa';
-    ctx.fillRect(px + 8, py + 18 + bob, ts - 16, 4);
-    ctx.fillStyle = '#ffdd88';
-    ctx.beginPath();
-    ctx.arc(px + 16, py + 6 + bob, 7, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#ccaa66';
-    ctx.fillRect(px + 10, py + 2 + bob, 4, 2);
-    ctx.fillRect(px + 18, py + 2 + bob, 4, 2);
-    ctx.fillStyle = '#000';
-    ctx.fillRect(px + 12, py + 5 + bob, 2, 2);
-    ctx.fillRect(px + 18, py + 5 + bob, 2, 2);
-    ctx.fillStyle = '#ff8844';
-    ctx.fillRect(px + 16, py + 6 + bob, 2, 2);
-    ctx.fillRect(px + 20, py + 6 + bob, 2, 2);
-    ctx.fillStyle = '#3355aa';
-    const lx = px + 10 + legOffset, rx = px + 18 - legOffset;
-    const la = px + 10 + armOffset, ra = px + 18 - armOffset;
-    ctx.fillRect(lx, py + 22 + bob, 4, 8);
-    ctx.fillRect(rx, py + 22 + bob, 4, 8);
-    ctx.fillStyle = '#663311';
-    const bx = lx - 1, by = py + 28 + bob;
-    ctx.fillRect(lx - 1, py + 28 + bob, 5, 3);
-    ctx.fillRect(rx - 1, py + 28 + bob, 5, 3);
+    const offsetX = Math.cos(t * 0.5) * 16 + 8;
+    const offsetY = Math.sin(t * 0.7) * 2 - 4;
+    const cx = px + offsetX + (isWalking ? Math.sin(walkCycle) * 2 : 0);
+    const cy = py + offsetY;
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.beginPath(); ctx.ellipse(cx + 6, cy + 14, 5, 2, 0, 0, Math.PI * 2); ctx.fill();
+    const tailWag = Math.sin(t * 6) * 0.3 + 0.7;
+    ctx.fillStyle = '#e8a030';
+    ctx.fillRect(cx + 8, cy + 8, 2, 5);
+    ctx.fillRect(cx + 4, cy + 6, 2, 7);
+    ctx.fillRect(cx + 7, cy + 5, 3, 3);
+    ctx.fillStyle = '#d08020';
+    ctx.fillRect(cx + 5, cy + 5 + tailWag, 2, 4);
+    ctx.fillStyle = '#e8a030';
+    ctx.fillRect(cx + 2, cy + 6, 2, 3);
+    ctx.fillRect(cx + 10, cy + 6, 2, 3);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(cx + 1, cy + 6, 2, 2);
+    ctx.fillRect(cx + 9, cy + 6, 2, 2);
+    ctx.fillStyle = '#222222';
+    ctx.fillRect(cx + 2, cy + 6, 1, 1);
+    ctx.fillRect(cx + 10, cy + 6, 1, 1);
+    const legOff = isWalking ? Math.sin(walkCycle + 1) * 1.5 : 0;
+    ctx.fillStyle = '#d08020';
+    ctx.fillRect(cx + 3 + legOff, cy + 10, 2, 3);
+    ctx.fillRect(cx + 7 - legOff, cy + 10, 2, 3);
   },
 
   renderEnemies(ctx, cx, cy) {
     const ts = this.tileSize;
+    const t = this.animTime || 0;
     for (const e of this.enemies) {
       if (e.isDead) continue;
       const px = e.x * ts - cx, py = e.y * ts - cy;
       if (px < -ts || px > this.width + ts || py < -ts || py > this.height + ts) continue;
+      const bob = Math.sin(t * 4 + e.x + e.y) * 1.5;
       ctx.fillStyle = 'rgba(0,0,0,0.15)';
-      ctx.beginPath();
-      ctx.ellipse(px + 16, py + 30, 7, 3, 0, 0, Math.PI * 2);
-      ctx.fill();
-      const bob = Math.sin((this.animTime || 0) * 4 + e.x + e.y) * 1.5;
+      ctx.beginPath(); ctx.ellipse(px + 16, py + 30, 8, 3, 0, 0, Math.PI * 2); ctx.fill();
       const bodyColor = e.isBoss ? '#cc2222' : (e.aggro ? '#cc4422' : '#aa6633');
-      const eyeColor = e.aggro ? '#ff2222' : '#ffdd66';
       ctx.fillStyle = bodyColor;
-      ctx.fillRect(px + 4, py + 6 + bob, ts - 8, ts - 10);
+      ctx.fillRect(px + 5, py + 6 + bob, ts - 10, ts - 12);
       ctx.fillStyle = e.aggro ? '#ee5533' : '#cc8844';
-      ctx.fillRect(px + 6, py + 8 + bob, ts - 12, ts - 14);
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(px + 8, py + 10 + bob, 6, 6);
-      ctx.fillRect(px + 18, py + 10 + bob, 6, 6);
+      ctx.fillRect(px + 7, py + 8 + bob, ts - 14, ts - 16);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(px + 9, py + 10 + bob, 5, 5);
+      ctx.fillRect(px + 18, py + 10 + bob, 5, 5);
+      ctx.fillStyle = e.aggro ? '#ff2222' : '#222222';
+      ctx.fillRect(px + 10, py + 11 + bob, 3, 3);
+      ctx.fillRect(px + 19, py + 11 + bob, 3, 3);
+      const mouthOpen = Math.sin(t * 6 + e.x) > 0.3;
       ctx.fillStyle = '#000';
-      ctx.fillRect(px + 10, py + 12 + bob, 3, 3);
-      ctx.fillRect(px + 20, py + 12 + bob, 3, 3);
+      ctx.fillRect(px + 13, py + 18 + bob, 6, mouthOpen ? 3 : 1);
+      ctx.fillStyle = e.aggro ? '#ff4444' : '#888888';
+      ctx.fillRect(px + 8, py + 4 + bob, 2, 2);
+      ctx.fillRect(px + 22, py + 4 + bob, 2, 2);
       if (e.isBoss) {
         ctx.fillStyle = '#ff4444';
-        ctx.fillRect(px + 4, py + 4 + bob, ts - 8, 3);
-        ctx.fillRect(px + 4, py + ts - 7 + bob, ts - 8, 3);
+        ctx.fillRect(px + 3, py + 3 + bob, ts - 6, 3);
+        ctx.fillRect(px + 3, py + ts - 6 + bob, ts - 6, 3);
         ctx.fillStyle = '#ffaa00';
-        ctx.font = 'bold 10px monospace';
+        ctx.font = 'bold 9px monospace';
         ctx.textAlign = 'center';
         ctx.fillText('BOSS', px + ts / 2, py - 2 + bob);
+        const glow = Math.sin(t * 5) * 0.3 + 0.5;
+        ctx.fillStyle = `rgba(255,68,68,${glow * 0.2})`;
+        ctx.beginPath(); ctx.arc(px + ts / 2, py + ts / 2, 18, 0, Math.PI * 2); ctx.fill();
       }
     }
   },
 
   renderNpcs(ctx, cx, cy) {
     const ts = this.tileSize;
+    const t = this.animTime || 0;
     for (const [npcId, pos] of Object.entries(this.npcPositions)) {
       const px = pos.x * ts - cx, py = pos.y * ts - cy;
       if (px < -ts || px > this.width + ts || py < -ts || py > this.height + ts) continue;
-      ctx.fillStyle = 'rgba(0,0,0,0.12)';
-      ctx.beginPath();
-      ctx.ellipse(px + 16, py + 30, 7, 3, 0, 0, Math.PI * 2);
-      ctx.fill();
-      const bob = Math.sin((this.animTime || 0) * 3 + npcId.length) * 1;
-      ctx.fillStyle = '#33aa66';
-      ctx.fillRect(px + 10, py + 16 + bob, 4, 10);
-      ctx.fillRect(px + 18, py + 16 + bob, 4, 10);
-      ctx.fillStyle = '#44cc77';
-      ctx.fillRect(px + 8, py + 10 + bob, ts - 16, ts - 14);
-      ctx.fillStyle = '#2a8844';
-      ctx.fillRect(px + 8, py + 18 + bob, ts - 16, 4);
-      ctx.fillStyle = '#ffdd88';
-      ctx.beginPath();
-      ctx.arc(px + 16, py + 6 + bob, 7, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#000';
-      ctx.fillRect(px + 12, py + 5 + bob, 2, 2);
-      ctx.fillRect(px + 18, py + 5 + bob, 2, 2);
-      ctx.fillStyle = '#33aa66';
-      ctx.fillRect(px + 10, py + 22 + bob, 4, 8);
-      ctx.fillRect(px + 18, py + 22 + bob, 4, 8);
-      ctx.fillStyle = '#553311';
-      ctx.fillRect(px + 10, py + 28 + bob, 5, 3);
-      ctx.fillRect(px + 17, py + 28 + bob, 5, 3);
+      const npcColors = {
+        merchant_maya: { base: '#ff8844', skin: '#ffcc88', hair: '#664422', hairLight: '#886644', cape: '#44aa66', pants: '#554433', boot: '#553311', trim: '#ee7733' },
+        elder_wisdom: { base: '#6688cc', skin: '#ddbb88', hair: '#cccccc', hairLight: '#eeeeee', cape: '#4455aa', pants: '#444466', boot: '#443322', trim: '#5588bb' },
+        blacksmith_borin: { base: '#cc6633', skin: '#ddaa77', hair: '#553311', hairLight: '#774422', cape: '#884422', pants: '#443322', boot: '#332211', trim: '#aa5533' },
+      };
+      const colors = npcColors[npcId] || { base: '#44cc77', skin: '#ffdd88', hair: '#775533', hairLight: '#997755', cape: '#338855', pants: '#335544', boot: '#553311', trim: '#33aa66' };
+      this.drawCharacter(ctx, px, py, colors, Math.sin(t * 3 + npcId.length) * 0.8, t * 3, 'idle');
       const dist = Math.abs(pos.x - this.playerX) + Math.abs(pos.y - this.playerY);
       if (dist === 1) {
-        const glow = Math.sin((this.animTime || 0) * 5) * 0.3 + 0.7;
-        ctx.fillStyle = `rgba(255,255,200,${glow * 0.6})`;
-        ctx.font = 'bold 14px monospace';
+        const glow = Math.sin(t * 5) * 0.3 + 0.7;
+        ctx.fillStyle = `rgba(255,255,200,${glow * 0.7})`;
+        ctx.font = 'bold 15px monospace';
         ctx.textAlign = 'center';
-        ctx.fillText('!', px + ts / 2, py - 4);
+        ctx.fillText('!', px + ts / 2, py - 6);
       }
     }
   },
@@ -664,30 +740,46 @@ const GameEngine = {
     for (const chest of this.chests) {
       const px = chest.x * ts - cx, py = chest.y * ts - cy;
       if (px < -ts || px > this.width + ts || py < -ts || py > this.height + ts) continue;
-      ctx.fillStyle = 'rgba(0,0,0,0.1)';
-      ctx.fillRect(px + 4, py + 28, ts - 8, 4);
-      ctx.fillStyle = chest.opened ? '#6a4a2a' : '#b8862d';
-      ctx.fillRect(px + 3, py + 6, ts - 6, ts - 8);
-      ctx.fillStyle = chest.opened ? '#8a6a4a' : '#daa520';
-      ctx.fillRect(px + 5, py + 8, ts - 10, ts - 12);
-      ctx.fillStyle = chest.opened ? '#4a3a1a' : '#ffd700';
-      ctx.fillRect(px + 5, py + 4, ts - 10, 5);
-      ctx.fillStyle = chest.opened ? '#3a2a0a' : '#b8860b';
-      ctx.fillRect(px + 5, py + 4, ts - 10, 2);
-      if (!chest.opened) {
-        const glow = Math.sin(t * 3) * 0.08 + 0.15;
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
+      ctx.fillRect(px + 3, py + 28, ts - 6, 5);
+      if (chest.opened) {
+        ctx.fillStyle = '#5a3a1a';
+        ctx.fillRect(px + 4, py + 8, ts - 8, ts - 10);
+        ctx.fillStyle = '#7a5a3a';
+        ctx.fillRect(px + 6, py + 10, ts - 12, ts - 14);
+        ctx.fillStyle = '#3a2a0a';
+        ctx.fillRect(px + 8, py + 12, 5, 5);
+        ctx.fillRect(px + 19, py + 12, 5, 5);
+        ctx.fillStyle = '#2a1a0a';
+        ctx.fillRect(px + 6, py + 6, ts - 12, 3);
+      } else {
+        ctx.fillStyle = '#8a5a1a';
+        ctx.fillRect(px + 3, py + 6, ts - 6, ts - 9);
+        ctx.fillStyle = '#daa520';
+        ctx.fillRect(px + 5, py + 8, ts - 10, ts - 12);
+        ctx.fillStyle = '#f0c030';
+        ctx.fillRect(px + 6, py + 9, ts - 12, ts - 14);
+        ctx.fillStyle = '#b8860b';
+        ctx.fillRect(px + 5, py + 4, ts - 10, 4);
+        ctx.fillStyle = '#ffd700';
+        ctx.fillRect(px + 5, py + 4, ts - 10, 2);
+        ctx.fillStyle = '#8a6a3a';
+        ctx.fillRect(px + 14, py + 4, 4, 4);
+        const glow = Math.sin(t * 3) * 0.1 + 0.15;
         ctx.fillStyle = `rgba(255,215,0,${glow})`;
         ctx.beginPath();
-        ctx.arc(px + ts / 2, py + ts / 2, 14, 0, Math.PI * 2);
+        ctx.arc(px + ts / 2, py + ts / 2, 16, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = '#ffd700';
         ctx.font = 'bold 16px monospace';
         ctx.textAlign = 'center';
         ctx.fillText('?', px + ts / 2, py + ts / 2 + 6);
-      } else {
-        ctx.fillStyle = '#3a2a0a';
-        ctx.fillRect(px + 10, py + 8, 4, 4);
-        ctx.fillRect(px + 18, py + 8, 4, 4);
+        if (Math.sin(t * 7 + chest.x) > 0.7) {
+          ctx.fillStyle = '#ffdd44';
+          ctx.fillRect(px + 6, py + 2, 2, 2);
+          ctx.fillRect(px + 24, py + 16, 2, 2);
+          ctx.fillRect(px + 12, py + 24, 2, 2);
+        }
       }
     }
   },
@@ -732,38 +824,18 @@ const GameEngine = {
       ctx.arc(mx + Math.cos(angle) * 60, my + Math.sin(angle) * 60, 8, 0, Math.PI * 2);
       ctx.fill();
     }
-    const heroX = 160, heroY = 420;
-    ctx.fillStyle = 'rgba(0,0,0,0.2)';
-    ctx.beginPath();
-    ctx.ellipse(heroX + 16, heroY + 32, 10, 4, 0, 0, Math.PI * 2);
-    ctx.fill();
-    const bob = Math.sin(t * 3) * 1;
-    ctx.fillStyle = '#4466aa';
-    ctx.fillRect(heroX + 10, heroY + 16 + bob, 4, 12);
-    ctx.fillRect(heroX + 18, heroY + 16 + bob, 4, 12);
-    ctx.fillStyle = '#5588cc';
-    ctx.fillRect(heroX + 8, heroY + 10 + bob, ts - 16, ts - 12);
-    ctx.fillStyle = '#ffdd88';
-    ctx.beginPath();
-    ctx.arc(heroX + 16, heroY + 6 + bob, 7, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#000';
-    ctx.fillRect(heroX + 12, heroY + 5 + bob, 2, 2);
-    ctx.fillRect(heroX + 18, heroY + 5 + bob, 2, 2);
-    ctx.fillStyle = '#3355aa';
-    ctx.fillRect(heroX + 10, heroY + 22 + bob, 4, 8);
-    ctx.fillRect(heroX + 18, heroY + 22 + bob, 4, 8);
-    ctx.fillStyle = '#663311';
-    ctx.fillRect(heroX + 10, heroY + 28 + bob, 5, 3);
-    ctx.fillRect(heroX + 17, heroY + 28 + bob, 5, 3);
-    ctx.fillStyle = '#cc2222';
-    ctx.fillRect(heroX + 24, heroY + 10 + bob, 6, 14);
-    ctx.fillRect(heroX + 22, heroY + 10 + bob, 4, 4);
-    ctx.fillRect(heroX + 28, heroY + 12 + bob, 4, 4);
-    ctx.fillRect(heroX + 4, heroY + 8 + bob, 6, 12);
-    ctx.fillStyle = '#4488aa';
-    ctx.fillRect(heroX + 4, heroY + 8 + bob, 8, 3);
-    ctx.fillRect(heroX + 22, heroY + 10 + bob, 10, 3);
+    this.drawCharacter(ctx, 160, 418,
+      { base: '#5588cc', skin: '#ffdd88', hair: '#8a5522', hairLight: '#aa7744',
+        boot: '#663311', cape: '#cc2222', pants: '#334477', trim: '#6688dd' },
+      Math.sin(t * 3) * 0.8, t * 8, 'idle');
+    for (let i = 0; i < 10; i++) {
+      const sx = (i * 47 + t * 20 * (1 + (i % 3) * 0.5)) % w;
+      const sy = 235 + Math.sin(t * 1.5 + i * 2.1) * 18 + (i - 5) * 3;
+      const sz = ((i * 71) % 2) + 1;
+      const alpha = Math.sin(t * 2.5 + i * 1.3) * 0.25 + 0.35;
+      ctx.fillStyle = `rgba(100,200,255,${alpha})`;
+      ctx.fillRect(sx, sy, sz, sz);
+    }
     ctx.font = 'bold 56px monospace';
     ctx.textAlign = 'center';
     ctx.fillStyle = '#80d0ff';
@@ -873,6 +945,12 @@ const GameEngine = {
     this.handleInput();
     CameraSystem.follow(this.pixelX + this.tileSize / 2, this.pixelY + this.tileSize / 2);
     ParticleSystem.update(dt);
+    if (this.isMoving && Math.random() < 0.4) {
+      const sparkleX = this.pixelX + Math.random() * 24 - 4;
+      const sparkleY = this.pixelY + 20 + Math.random() * 12;
+      ParticleSystem.emitBurst(sparkleX, sparkleY,
+        ['#88ccff', '#aaddff', '#ffffff'], 1, 30);
+    }
     this.ambientTimer += dt;
     if (this.ambientTimer > 0.1) {
       this.ambientTimer = 0;
